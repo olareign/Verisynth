@@ -77,7 +77,11 @@ const sendForgotPasswordMail = async (mailPayload: any) => {
         subject: mailPayload.subject,
         html: textMail,
     };
-  try {
+    console.log("mail-msg: ", msg);
+  try {                        
+    console.log("mailpayload: ", mailPayload);
+    console.log("mail-msg: ", msg);
+    
     const response = await sgMail.send(msg);
     console.log(response[0].statusCode);
     console.log(response[0].headers);
@@ -148,6 +152,9 @@ const sendCredential = async (mailPayload: any) => {
     html: textMail,
   };
   try {
+    console.log("mailpayload: ", mailPayload);
+    console.log("mail-msg: ", msg);
+
     const response = await sgMail.send(msg);
     console.log(response[0].statusCode);
     console.log(response[0].headers);

@@ -67,15 +67,15 @@ export const deleteSchool = async function(filter: Partial<Pick<ISchool,'institu
     }
 }
 
-export const updateSchool = async function(filter: Partial<Pick<ISchool,'institution_name' | 'email'>>, payload: any): Promise<ISchool | null>{
+export const updateSchoolPassword = async function(filter: Partial<Pick<ISchool, 'email'>>, payload: any): Promise<ISchool | null>{
     try {
         const schools = await School.findOneAndUpdate({
-            institution_name: filter['institution_name'],
             email: filter['email']
         },
-        {payload},
+        {password: payload},
         {new: true} //return the new value not the old one
         )
+        console.log("school==updaed==: ", schools);
         
         return schools;
     } catch (error) {
@@ -83,6 +83,21 @@ export const updateSchool = async function(filter: Partial<Pick<ISchool,'institu
     }
 }
 
+export const updateSchool = async function(filter: Partial<Pick<ISchool, 'email'>>, payload: any): Promise<ISchool | null>{
+    try {
+        const schools = await School.findOneAndUpdate({
+            email: filter['email']
+        },
+        {resetpin: payload},
+        {new: true} //return the new value not the old one
+        )
+        console.log("school==updaed==: ", schools);
+        
+        return schools;
+    } catch (error) {
+        throw error;
+    }
+}
 
 export const checkDBforPin = async function(payload: any): Promise < null | ISchool>{
     try {

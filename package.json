@@ -44,7 +44,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "npm install ts-node",
     "start": "tsc && node dist/src/app.js",
-    "dev": "npm-run-all --parallel dev:*",
+    "dev": "nodemon src/app.ts",
     "dev:server": "nodemon dist/src/app.js",
     "dev:build": "tsc --watch"
   },

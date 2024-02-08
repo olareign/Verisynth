@@ -4,7 +4,7 @@ import constant from '../utils/constant';
 import validation from '../utils/validation';
 import hashingModule, { comparePasswords } from '../utils/hashing.modules';
 import { StatusCodes } from 'http-status-codes';
-import { createSchool, getASchool, getASchoolForLogin,updateSchool } from '../services/school.service';
+import { createSchool, getASchool, getASchoolForLogin, updateSchool,updateSchoolPassword } from '../services/school.service';
 import { handleResponse } from '../utils/helper';
 import { ISchool } from '../mongodb/models/institution.models';
 import { createToken, tokenPayload } from '../utils/jwt';
@@ -125,7 +125,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise <Response | void> => {
     try {
-        let checkMail = await getASchool(req.body) 
+        let checkMail = await getASchoolForLogin(req.body) 
         if(!checkMail){
          throw new BadRequestError('This email is not registered')   
         }
@@ -144,7 +144,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
             pin: resetpin,
         };
 
-        sendForgotPasswordMail({ forgotPasswordPayload });
+        sendForgotPasswordMail(forgotPasswordPayload);
 
         return handleResponse({
             res,
@@ -160,6 +160,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
 export const inputForgotPassword = async (req: Request, res: Response, next: NextFunction): Promise <Response | void> => {
     try {
+        
         if(!req.body){
             throw new BadRequestError('Empty input body!')
         }
@@ -169,12 +170,15 @@ export const inputForgotPassword = async (req: Request, res: Response, next: Nex
         }
         
         if(checkMail.resetpin){
-            throw new BadRequestError('reset pin has already been use')   
+            throw new BadRequestError('reset pin has already been used')   
         }
         
-        const hashedPassword = hashingModule(req.body.password)
+        const hashedPassword = await hashingModule(req.body.password)
         let password = hashedPassword
-        let updatedSchool = await updateSchool(checkMail, password)
+        console.log("pass==", password);
+        console.log("pass==", hashedPassword);
+        
+        let updatedSchool = await updateSchoolPassword(checkMail, password)
 
         return handleResponse({
             res,
