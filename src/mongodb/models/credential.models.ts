@@ -27,17 +27,16 @@ const credentialSchema = new Schema<ICRD>({
   credential_ID: {
     type: String,
     required: true,
-    default: `${uuid().split('-')[0]}`
+    default: `${uuid().split('-')[0]}`,
+    unique: true
   },
   recipient_email: {
     type: String,
     required: true,
-    index: true
   },
   recipient_ID: {
     type: String,
     required: true,
-    index: true
   },
   degree_name: {
     type: String,

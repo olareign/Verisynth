@@ -4,7 +4,7 @@ import constant from '../utils/constant';
 import validation from '../utils/validation';
 import hashingModule, { comparePasswords } from '../utils/hashing.modules';
 import { StatusCodes } from 'http-status-codes';
-import { createSchool, getASchool, updateSchool } from '../services/school.service';
+import { createSchool, getASchool, getASchoolForLogin,updateSchool } from '../services/school.service';
 import { handleResponse } from '../utils/helper';
 import { ISchool } from '../mongodb/models/institution.models';
 import { createToken, tokenPayload } from '../utils/jwt';
@@ -17,9 +17,11 @@ import { checkDBforPin } from '../services/school.service';
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise <Response | void> => {
     try{
-        if(req.body){
+        if(!req.body){
             throw new BadRequestError('Empty input!!')
         }
+        console.log("BODY: ", req.body);
+        
         const {error} = validation.verify_institution.validate(req.body)
         if(error){
             return res.status(StatusCodes.BAD_REQUEST).json({
@@ -35,25 +37,28 @@ export const register = async (req: Request, res: Response, next: NextFunction):
         
         let dataToSave = {
             institution_name: req.body.institution_name,
-            institution_email: req.body.email,
+            email: req.body.email,
             password: hashed_password,
         }
         const detail = await createSchool(dataToSave)
+        console.log("DETAIL: ", detail);
 
         const payload = tokenPayload(detail as ISchool)
 
         const token = createToken({ payload })
 
-        let data;
-        let shuffle =(detail: Partial<Omit<ISchool, 'password'>>) => {
-            data = {
-                ...detail
-            }
+
+        const data = {
+            institution_ID: detail?.institution_ID,
+            institution_name: detail?.institution_name,
+            email: detail?.email,
+            role: detail?.role,
+            _id: detail?._id,
+            createdAt: detail?.createdAt,
+            updatedAt: detail?.updatedAt,
         }
-        shuffle(detail as ISchool);
         
         //send mail for verification or as a welcome 
-
         
         return handleResponse({
             res,
@@ -72,12 +77,12 @@ export const register = async (req: Request, res: Response, next: NextFunction):
 
 export const login = async (req: Request, res: Response, next: NextFunction): Promise <Response | void> => {
     try{
-        if(req.body){
+        if(!req.body){
             throw new BadRequestError('Empty input!!')
         }
 
         const {email, password} = req.body;
-        let school = await getASchool({email})
+        let school = await getASchoolForLogin({email})
         if(!school){
             throw new BadRequestError('Institute Account not found!')
         }
@@ -86,18 +91,22 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
             throw new BadRequestError('Incorrect password!')
         }
         
-
         const payload = tokenPayload(school as ISchool)
 
         const token = createToken({ payload })
 
-        let data;
-        let shuffle =(detail: Partial<Omit<ISchool, 'password'>>) => {
-            data = {
-                ...detail
-            }
+        
+
+        const data = {
+            institution_ID: school?.institution_ID,
+            institution_name: school?.institution_name,
+            email: school?.email,
+            role: school?.role,
+            _id: school?._id,
+            createdAt: school?.createdAt,
+            updatedAt: school?.updatedAt,
         }
-        shuffle(school as ISchool);
+
        
         return handleResponse({
             res,

@@ -38,8 +38,7 @@ const verifierSchema: Schema = new Schema({
   },
   email: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   role: {
     type: String,

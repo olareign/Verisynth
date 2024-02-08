@@ -26,6 +26,18 @@ types of credentials: ['basic', 'tertiary', 'vocational']
 pdf = string
 
 
+ "build": "npx tsc",
+ "start": "node dist/app.js",
+ "dev": "nodemon src/app.ts"
+
+
+
+    "postinstall": "npm install ts-node",
+    "start": "tsc && node dist/src/app.js",
+    "dev": "npm-run-all --parallel dev:*",
+    "dev:server": "nodemon dist/src/app.js",
+    "dev:build": "tsc --watch"
+
 ## verification
 public route
 

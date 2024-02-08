@@ -1,18 +1,18 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { uuid } from '../../utils/hashing.modules'; // Assuming the correct export from hashing.modules
 
-export interface ISchool {
+export interface ISchool extends Document {
   institution_ID: string;
   institution_name: string;
   email: string;
   password: string;
   role: string;
   resetpin: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-interface ISCH extends ISchool, Document {}
-
-const SchoolSchema = new Schema<ISCH>({
+const SchoolSchema = new Schema<ISchool>({
   institution_ID: {
     type: String,
     required: true,
@@ -22,7 +22,6 @@ const SchoolSchema = new Schema<ISCH>({
     type: String,
     required: true,
     unique: true,
-    index: 1
   },
   email: {
     type: String,
@@ -46,4 +45,4 @@ const SchoolSchema = new Schema<ISCH>({
   timestamps: true
 });
 
-export const School = mongoose.model<ISCH>("School", SchoolSchema);
+export const School = mongoose.model<ISchool>("School", SchoolSchema);

@@ -1,11 +1,11 @@
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv'
-import CustomAPIError from '../errors/index';
 dotenv.config()
+import jwt from 'jsonwebtoken';
+import CustomAPIError from '../errors/index';
 
 // Define the environment variable types if they exist
 
-const secret: string = process.env.SECRET || '';
+const secret: string = process.env.SECRET || '5A0K9P2E5L61B32DCXB4D0Y9M4FG9';
 const expiry: string = process.env.EXPIRATION || '2d';
 
 // Define the User interface for type safety

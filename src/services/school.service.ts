@@ -8,7 +8,23 @@ import {School, ISchool} from "../mongodb/models/institution.models";
 export const createSchool = async function(payload: any): Promise<ISchool | null>{
     try {
         const school_details: ISchool = await School.create({...payload})
+        console.log("CREATED DATA: ", school_details);        
         return school_details;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const getASchoolForLogin = async function(filter: Partial<Pick<ISchool, 'email' >>): Promise<ISchool | null>{
+    try {
+        console.log("Filter: ", filter);
+        
+        const schools = await School.findOne({
+            email: filter['email']
+        })
+
+        console.log('school', schools)
+        return schools;
     } catch (error) {
         throw error;
     }
@@ -16,10 +32,14 @@ export const createSchool = async function(payload: any): Promise<ISchool | null
 
 export const getASchool = async function(filter: Partial<Pick<ISchool,'institution_name' | 'email' >>): Promise<ISchool | null>{
     try {
+        console.log("Filter: ", filter);
+        
         const schools = await School.findOne({
             institution_name: filter['institution_name'],
             email: filter['email']
         })
+
+        console.log('school', schools)
         return schools;
     } catch (error) {
         throw error;
