@@ -14,7 +14,6 @@ import { checkDBforPin } from '../services/school.service';
 
 
 
-
 export const register = async (req: Request, res: Response, next: NextFunction): Promise <Response | void> => {
     try{
         if(!req.body){

@@ -25,6 +25,15 @@ types of credentials: ['basic', 'tertiary', 'vocational']
 -expiry_date: optional
 pdf = string
 
+  institution_id: string | ISchool;
+  credential_ID: string;
+  recipient_email: string;
+  recipient_ID: string;
+  fullname: string;
+  degree_name: string;
+  awarded_date: string;
+  expiration_date: string;
+  file_string: string;
 
  "build": "npx tsc",
  "start": "node dist/app.js",

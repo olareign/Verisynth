@@ -1,31 +1,29 @@
 import { NextFunction, Request, Response, response } from "express";
 import CustomAPIError from "../errors/index";
 import { StatusCodes } from "http-status-codes";
-import { log } from "console";
+import {JwtPayload, Secret, verify} from "jsonwebtoken";  
 import { decodeToken } from "../utils/jwt";
+import { School } from "../mongodb/models/institution.models";
 
 
-interface CustomRequest extends Request {
-    user?: any;
-}
 
 
-const authenticateUser = async (req: CustomRequest, res: Response, next: NextFunction): Promise<any> => {
+const authenticateUser = async function (req: Request, res: Response, next: NextFunction): Promise<any> {
     try {
         console.log("Validate")
-        let token: string | any = req.signedCookies.Token
-        const authHeader = req.headers.authorization
-    if (authHeader && authHeader.startsWith('Bearer')) {        
-            token = authHeader.split(' ')[1];
+        const token = req.headers.authorization?.split(' ')[1]
+        if (!token) {        
+            return next(new CustomAPIError.AuthenticationError("You are not logged in, Please sign in"))
         }
-        // check for token
-        if (!token) {
-            throw new CustomAPIError.AuthenticationError('Authentication Failed')
-        }
-               
+    
         let userData = await decodeToken(token)
-       
+        console.log("userData", userData);
+        const issuer = await School.findOne({institution_ID : userData.institution_ID})
+        if(!issuer){
+            throw new CustomAPIError.AuthenticationError("Invalid Details, please sign in")
+        }
         req.user = userData;
+        console.log(req.user);
 
         next();
     } catch (error) {
@@ -35,14 +33,10 @@ const authenticateUser = async (req: CustomRequest, res: Response, next: NextFun
     }
 }
 
-interface CustomRequest extends Request {
-    user?: any;
-}
-
 const UnauthorizePermission= (...roles:string[]): any => {
-    return (req: CustomRequest, res: Response, next: NextFunction) => {
+    return (req: Request, res: Response, next: NextFunction) => {
         console.log(roles, "checking your role....", req.user)
-        if (!roles.includes(req.user?.role)) {
+        if (!roles.includes(req.user?.role || '')) {
             return next(new CustomAPIError.AuthorizationError('Unauthorize access to this site'))
         }
         next();

@@ -99,6 +99,22 @@ export const updateSchool = async function(filter: Partial<Pick<ISchool, 'email'
     }
 }
 
+export const updateSchoolSchema = async function(filter: Partial<Pick<ISchool, 'email'>>): Promise<ISchool | null>{
+    try {
+        const schools = await School.findOneAndUpdate({
+            email: filter['email']
+        },
+        { $inc: {amount_of_awarded_credentials: 1 } },
+        {new: true} //return the new value not the old one
+        )
+        console.log("school==updaed==: ", schools);
+        
+        return schools;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const checkDBforPin = async function(payload: any): Promise < null | ISchool>{
     try {
         const school_details = await School.findOne({ email: payload.email, resetpin: payload.resetpin });

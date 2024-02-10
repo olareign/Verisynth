@@ -8,6 +8,8 @@ export interface ISchool extends Document {
   password: string;
   role: string;
   resetpin: number;
+  amount_of_awarded_credentials: number;
+  amount_of_organization_profile: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -40,6 +42,16 @@ const SchoolSchema = new Schema<ISchool>({
   resetpin: {
     type: Number,
     required: false,
+  },
+  amount_of_awarded_credentials: {
+    type: Number,
+    require: true,
+    default: 0
+  },
+  amount_of_organization_profile: {
+    type: Number,
+    require: true,
+    default: 0
   }
 }, {
   timestamps: true

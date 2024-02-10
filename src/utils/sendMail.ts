@@ -1,29 +1,9 @@
 import dotenv from 'dotenv';
 import sgMail from '@sendgrid/mail';
+import nodemailer from "nodemailer";
 
 dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
-
-// type MailPayload = {
-//   to: string;
-//   pin?: string;
-//   subject: string;
-//   details?: {
-//     fullName: string;
-//     certificate_ID: string;
-//     recipient_ID: string;
-//     recipient_email: string;
-//     degreeName: string;
-//     degreeType: string;
-//     awarded_date: string;
-//     issuance_date: string;
-//     expiration_date: string;
-//   };
-//   issuer?: {
-//     institution_name: string;
-//     handler: string;
-//   };
-// };
 
 const sendForgotPasswordMail = async (mailPayload: any) => {
     const textMail = `<!DOCTYPE html>
@@ -163,4 +143,34 @@ const sendCredential = async (mailPayload: any) => {
   }
 };
 
-export { sendForgotPasswordMail, sendCredential };
+const SendEmail = async function (
+  email: string,
+  subject: string,
+  message: string,
+) {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      auth: {
+        user: process.env.SMTP_USER,//"abdulrasaqolarewaju@gmail.com",
+        pass: process.env.SMTP_PASS,//"falo lvcq kqhg zevn",
+      },
+    });
+    const mailOption = {
+      from: "abdulrasaqolarewaju88@gmail.com",
+      to: email,
+      subject, //"Verify your email",
+      html: message, //`<p>Enter ${otpCode} in the app to verify your email address and complete the signUp process.</p>`
+    };
+    // sending the mail with error handling
+
+    await transporter.sendMail(mailOption);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+
+export { SendEmail, sendForgotPasswordMail, sendCredential };
