@@ -23,7 +23,7 @@ types of credentials: ['basic', 'tertiary', 'vocational']
 -degree_name = string
 -date_awarded = string
 -expiry_date: optional
-pdf = string
+file_string = string
 
   institution_id: string | ISchool;
   credential_ID: string;

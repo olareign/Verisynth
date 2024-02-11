@@ -32,7 +32,7 @@ const credentialSchema = new Schema<ICRD>({
   },
   recipient_email: {
     type: String,
-    required: true,
+    required: true
   },
   recipient_ID: {
     type: String,

@@ -8,4 +8,5 @@ router.patch("/verify/credential", Controller.verifyCredential)
 router.patch("/institution/upload/credential", authenticateUser, Controller.uploadCredentialFile)
 
 
+
 export default router;

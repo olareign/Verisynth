@@ -21,7 +21,7 @@ export const issueCertificate = async (req: Request, res: Response, next: NextFu
       throw new Error('Empty input body')
     }
     const senderDetails = await getASchool({ email: email});
-    const StudentData = await credential.create(req.body);
+    const StudentData = await credential.create({ institution_ID: senderDetails?._id, ...req.body});
     if (!StudentData) {
       throw new CustomAPIError("Failed to create certificate", 500);
     }
@@ -120,11 +120,10 @@ export const getSchoolAwardedCredential = async (req: Request, res: Response, ne
 
 export const verifyCredential = async (req: Request, res: Response, next: NextFunction): Promise <Response | void> => {
   try {
-      if(!req.query.credential_ID){
-        throw new Error('Kindly  provide the credential ID')
+      if(!req.body){
+        throw new Error('Empty input body')
       }
-      const credential_ID = req.query.credential_ID as string
-      const credential = await getACredentials({ credential_ID});
+      const credential = await getACredentials( req.body );
       if(!credential){
         throw  new CustomAPIError("The requested resource was not found",StatusCodes.NOT_FOUND)
       }

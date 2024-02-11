@@ -1,6 +1,5 @@
 import {Response, Request, NextFunction} from 'express';
 import BadRequestError from '../errors/BadrequestError';
-import constant from '../utils/constant';
 import validation from '../utils/validation';
 import hashingModule, { comparePasswords } from '../utils/hashing.modules';
 import { StatusCodes } from 'http-status-codes';
