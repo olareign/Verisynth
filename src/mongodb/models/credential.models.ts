@@ -37,6 +37,7 @@ const credentialSchema = new Schema<ICRD>({
   recipient_ID: {
     type: String,
     required: true,
+    default: () => uuid().replace(/-/g, '')
   },
   degree_name: {
     type: String,

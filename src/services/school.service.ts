@@ -30,12 +30,11 @@ export const getASchoolForLogin = async function(filter: Partial<Pick<ISchool, '
     }
 }
 
-export const getASchool = async function(filter: Partial<Pick<ISchool,'institution_name' | 'email' >>): Promise<ISchool | null>{
+export const getASchool = async function(filter: Partial<Pick<ISchool, 'email' >>): Promise<ISchool | null>{
     try {
         console.log("Filter: ", filter);
         
         const schools = await School.findOne({
-            institution_name: filter['institution_name'],
             email: filter['email']
         })
 

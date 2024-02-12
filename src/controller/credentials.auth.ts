@@ -13,15 +13,22 @@ import { UploadedFile } from "express-fileupload";
 
 export const issueCertificate = async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
   try {
-    const { email } = req.user as institution; // Assuming req.user is properly typed
-    if(!email){
+    const { email, institution_ID, institution_name } = req.user as institution; // Assuming req.user is properly typed
+    console.log("email", email);
+    console.log("institution_ID", institution_ID);
+    
+    if(!institution_ID){
       throw new CustomAPIError('Unauthorize Access to this route, kindly login', StatusCodes.UNAUTHORIZED);
     }
     if(!req.body){
       throw new Error('Empty input body')
     }
-    const senderDetails = await getASchool({ email: email});
-    const StudentData = await credential.create({ institution_ID: senderDetails?._id, ...req.body});
+    const school = await getASchool({ email: email });
+    console.log("SCHOOL: ", school);
+    
+    const StudentData = await credential.create({ institution_id: school?._id, ...req.body});
+    console.log("Student", StudentData);
+    
     if (!StudentData) {
       throw new CustomAPIError("Failed to create certificate", 500);
     }
@@ -76,7 +83,7 @@ export const issueCertificate = async (req: Request, res: Response, next: NextFu
           </div>
           <div class="footer">
               <p>Best Regards,</p>
-              <p>${senderDetails?.institution_name}</p>
+              <p>${institution_name}</p>
           </div>
       </body>
       </html>
@@ -101,15 +108,17 @@ export const issueCertificate = async (req: Request, res: Response, next: NextFu
 export const getSchoolAwardedCredential = async (req: Request, res: Response, next: NextFunction): Promise <Response | void> => {
     try {
         const { email } = req.user as institution;
-        const credentialsLog = await credential.find({institution_id: req.query.issuerid})
+        const credentialsLog = await credential.find({institution_id: req.query.issuerid}).lean()
         if(!credentialsLog){
         throw new  CustomAPIError('No Credentials found for this issuer',StatusCodes.NOT_FOUND)
         }
+        let total = credentialsLog.length
         return handleResponse({
           res,
           statusCode: StatusCodes.OK,
           message: 'Credentials list of this Issuer, successfully fetched.',
           data: {
+            total,
             credentialsLog
           }
         })
