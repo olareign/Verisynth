@@ -108,6 +108,7 @@ export const issueCertificate = async (req: Request, res: Response, next: NextFu
 export const getSchoolAwardedCredential = async (req: Request, res: Response, next: NextFunction): Promise <Response | void> => {
     try {
         const { email } = req.user as institution;
+
         const credentialsLog = await credential.find({institution_id: req.query.issuerid}).lean()
         if(!credentialsLog){
         throw new  CustomAPIError('No Credentials found for this issuer',StatusCodes.NOT_FOUND)
@@ -153,20 +154,24 @@ export const uploadCredentialFile = async (req: Request, res: Response, next: Ne
   try {
       const {email} = req.user as institution;
       const credential_ID = req.query.credential_ID as string;
+      console.log("credential_ID: ", credential_ID);
+      
       const credential = await getACredentials({ credential_ID })
       if(!credential){
         throw new Error('Invalid credential ID')
       }
 
       const file = req.files?.image as UploadedFile;
+     
 
       const result = await UploadImage(file.data, `credential-${credential_ID}`, "CREDENTIAL")
         
       const credential_file: string = result.secure_url;
 
       let file_string = credential_file
-      const updatedCredential = await updateCredentials(credential, file_string)
-
+      const updatedCredential = await updateCredentials( { credential_ID: credential_ID}, file_string);
+      console.log("Updated Credential: ", updatedCredential);
+      
       return handleResponse({
         res,
         statusCode: StatusCodes.OK,
